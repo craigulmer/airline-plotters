@@ -2,21 +2,25 @@ import sys
 from math import *
 import matplotlib.pyplot as plt
 from numpy import *
-
+import gzip
+import bz2
 
 # Globals
-color='b'     #Line color. Can also do '-ob' for line w/ points
-alpha='0.20'  #How faint to make the line.
-linewidth=1.5 #How thick to make the line
+color='b'      #Line color. Can also do '-ob' for line w/ points
+alpha='0.20'   #How faint to make the line.
+linewidth=1.5  #How thick to make the line
+figdims=(20,5) #How big to make plot
+cutoff=6000.0  #Altitude cutoff. We toss flights that start mid-air
 
 # Hardcode airports for now. Code is smart enough to let you
 # add more to this list.
 airports = ['SFO','ATL','ABQ','CHS']
 
 
-# parse my wkt format, which is not technically compliant wkt because
-# individual vals are (lon,lat,alt,seconds_since_epoc). Other wkt 
-# parsers don't like more than 2 or 3 vals.
+# Parse our wkt (well-known text) format. Technically, I think we're not
+# wkt compliant because our individual data values are 
+# (lon, lat, alt, seconds_since_epoc). Other parsers seem to choke on
+# more than 2 or 3 values, which seems simple-minded to me.
 def parseWkt(s):
     s2 = s.replace("LINESTRING (","").replace(")","");
     vals = s2.split(",")
@@ -40,6 +44,7 @@ def haversine(lon1, lat1, lon2, lat2):
     mi = 3956 * c
     return mi
 
+
 # pylab kludge to make labels readable
 def fmt_commas(val, pos=None):
     s = '%d' % val
@@ -51,6 +56,9 @@ def fmt_commas(val, pos=None):
 
 
 
+
+
+
 if len(sys.argv) > 1:
     filename = sys.argv[1]
 else:
@@ -59,17 +67,29 @@ else:
 
 
 
-plt.figure(figsize=(20,5))
+plt.figure(figsize=figdims)
 
 num_cols = len(airports)
 lengths=[]
 start_loc=[]
-cutoff=6000.0
 val=0;
 toss_count=0
 
-with open(filename) as text:
-    for line in text:
+
+
+
+if filename.endswith(".gz"):
+    file = gzip.open(filename)
+elif filename.endswith(".bz2"):
+    file = bz2.BZ2File(filename)
+else:
+    file = open(filename)
+
+
+if(1):
+#with open(filename) as text:
+    for line in file:
+        #print line
         (np,tag,swkt)=line.split('\t');
         (plane,airline,src,dst)=tag.split('|')
 
@@ -153,7 +173,6 @@ print "Toss Count ",toss_count
 #plt.hist(lengths,100)
 
 for i in range(num_cols):
-    print i
 
     if(i<num_cols-1):
         plt.subplot(num_cols,1,i+1); plt.gca().axes.get_xaxis().set_visible(False); 
