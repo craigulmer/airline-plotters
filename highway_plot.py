@@ -1,5 +1,3 @@
-# Generic plot of where the planes gly
-
 import sys
 import gzip
 import bz2
