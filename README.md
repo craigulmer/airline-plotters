@@ -3,6 +3,16 @@ airline-plotters
 
 Misc scripts for plotting airline tracks
 
+Airport Finder
+--------------
+This tool walks through a list of routes and tries to figure out what
+the coordinates are for all the airports it sees. It does this by
+selecting the Source name for flights on the ground and associating
+the coordinates with the airport. After walking through the routes,
+the coordinates for each airport are averaged together. This of course
+won't work well if any of the values are completely wrong. In the future
+this should be changed to a majority-wins clustering algorithm.
+
 
 Cannonball Plot
 ---------------
