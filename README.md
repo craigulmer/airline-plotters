@@ -4,8 +4,8 @@ airline-plotters
 Misc scripts for plotting airline tracks
 
 
-Cannonball Plots
-----------------
+Cannonball Plot
+---------------
 This plotter is meant to show how far and high planes travel leaving
 from different airports. For simplicity it figures out where a
 plane originates from just by using the source tag in the airline
@@ -29,4 +29,35 @@ their src/dst values. Therefore you get some ups and downs, or
 unexpectedly long voyages. The current version of this plotter does
 some simple hacks to discard bad flights, but this should be looked
 into in more detail.
+
+Highway Plot
+------------
+This plotter just displays a collection of routes on top of a map. It 
+has hooks in it to let you crop the routes to a specified region. Routes
+are plotted with an Alpha value (ie, transparency) in order to fake
+a heat map for different areas (ie, the more routes that fly over something,
+the darker the line becomes). 
+
+The annoying thing for this one is splitting up routes that cross the 
+international dateline. If you don't do anything, the -180 to 180 lon
+change will draw a long, horizontal line across the screen. You can do
+two things to fix this: (1) run your dataset through a splitter that
+splits routes into different pieces as they cross the line or (2) enable
+the built-in splitter that looks for crossings and splits them up before
+plotting them. Option (1) is faster, if you're in a situation where you'll
+be redrawing the same data a lot. Option (2) takes some time, but is easier
+for dealing with stuff.
+
+The basemap package allows you to specify the resolution of the
+maps. For quick jobs, use the low-res setting (l). The high-res version
+is good for end products, and requires additional map data.
+
+Warning: This plotting can take a long amount of time, as each route may
+be comprised of many segments, and a full day may have tens of thousands 
+of routes.
+
+Requirements: basemap, basemap-data, basemap-data-hires, geos
+
+On centos6, this can be done via:
+ yum install python-basemap python-basemap-data python-basemap-data-hires geos
 

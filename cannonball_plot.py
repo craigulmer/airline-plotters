@@ -86,86 +86,80 @@ else:
     file = open(filename)
 
 
-if(1):
-#with open(filename) as text:
-    for line in file:
-        #print line
-        (np,tag,swkt)=line.split('\t');
-        (plane,airline,src,dst)=tag.split('|')
+for line in file:
+    #print line
+    (np,tag,swkt)=line.split('\t');
+    (plane,airline,src,dst)=tag.split('|')
 
 
-        if not (src in airports):
-            continue
+    if not (src in airports):
+        continue
 
         
-        if(np<4):
-            continue    
+    if(np<4):
+        continue    
 
-        data = parseWkt(swkt)
+    data = parseWkt(swkt)
                
-        d=0.0
-        dist=[]
-        alt=[]
-        speed=[]
+    d=0.0
+    dist=[]
+    alt=[]
+    speed=[]
 
-        if(data[0][2] > cutoff):
-            continue
+    if(data[0][2] > cutoff):
+        continue
        
 
-        for i in range(len(data)):
+    for i in range(len(data)):
             
-            if (i==0):
-                continue           
+        if (i==0):
+            continue           
 
-            lon1=data[i][0]
-            lon2=data[i-1][0]
-            lat1=data[i][1]
-            lat2=data[i-1][1]
+        lon1=data[i][0]
+        lon2=data[i-1][0]
+        lat1=data[i][1]
+        lat2=data[i-1][1]
 
-            mi = haversine(lon1, lat1, lon2, lat2)
-            t=data[i][3]-data[i-1][3]
+        mi = haversine(lon1, lat1, lon2, lat2)
+        t=data[i][3]-data[i-1][3]
 
-            if(t==0):
-                print "Bad time at ",i
-                t=1
+        if(t==0):
+            print "Bad time at ",i
+            t=1
 
-            mph = (3600.0*mi)/t
+        mph = (3600.0*mi)/t
 
-            d=d+mi
-            dmi=d #d*0.000189394;
+        d=d+mi
+        dmi=d #d*0.000189394;
 
-            dist.append(dmi)
-            alt.append(data[i][2]/5280.0)
-            speed.append(mph)
+        dist.append(dmi)
+        alt.append(data[i][2]/5280.0)
+        speed.append(mph)
 
-        lengths.append(dmi)
-        speed_max=max(speed)
+    lengths.append(dmi)
+    speed_max=max(speed)
 
-        if(dmi>6000):
-            print "Long distance", src,dst,dmi,speed_max
+    if(dmi>6000):
+        print "Long distance", src,dst,dmi,speed_max
 
-        #if(1):
-        if(speed_max <3000):
-        #if (speed_max < 800):
-        #if(dmi>4000) and (dmi<4200):
+    if(speed_max <3000): #woah. still really high
         
-            idx = airports.index(src) + 1
-
-            #print "xx:", src,idx,dst,dmi, speed_max
+        idx = airports.index(src) + 1
+        #print "xx:", src,idx,dst,dmi, speed_max
             
-            plt.subplot(num_cols,1,idx)
-            plt.plot(dist,alt, color, alpha=alpha,lw=linewidth)
-            plt.xlim((0,9000))
-            # if you want to see how out of whack speed can get
-            #plt.subplot(num_cols,1,num_cols+idx)
-            #plt.plot(dist,speed, color, alpha=alpha,lw=linewidth)
-            val=val+1
-        else:
-            toss_count=toss_count+1
-
+        plt.subplot(num_cols,1,idx)
+        plt.plot(dist,alt, color, alpha=alpha,lw=linewidth)
+        plt.xlim((0,9000))
+        # if you want to see how out of whack speed can get
+        #plt.subplot(num_cols,1,num_cols+idx)
+        #plt.plot(dist,speed, color, alpha=alpha,lw=linewidth)
         val=val+1
-        #if(val>100):
-        #   break
+    else:
+        toss_count=toss_count+1
+
+    val=val+1
+    #if(val>100):
+    #   break
 
 
 print "Toss Count ",toss_count
