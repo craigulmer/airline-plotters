@@ -20,10 +20,12 @@ import bz2
 # Globals
 crop_region='world' #'usa_main' #sfbay, world, ukraine
 color='b'      #Line color. Can also do '-ob' for line w/ points
-alpha='0.50'   #How faint to make the line.
+alpha='0.09'   #How faint to make the line.
 resolution='l' #Set level-of-detail on maps: c,l,h
 linewidth=1.0  #How thick to make the line
 sampleperiod=400 #every 6minutes with some gap
+num_periods=4
+altitude_thresh=1000.0 #ignore everything below this height
 
 # Parse our wkt (well-known text) format. Technically, I think we're not
 # wkt compliant because our individual data values are 
@@ -151,13 +153,13 @@ for line in file:
         #Look for segments that were longer than a certain
         #duration, and were actually in the air
         #if((t>2*sampleperiod) and (t<4*sampleperiod) 
-        if((t>3*sampleperiod) 
-              and (data[i-1][2]>500.0) and (data[i][2]>500.0)):
+        if((t>=num_periods*sampleperiod) 
+             and (data[i-1][2]>altitude_thresh) and (data[i][2]>altitude_thresh)):
             tmpx=(data[i-1][0], data[i][0])
-            tmpy=(data[i-1][1], data[i][1])
-            mx,my=m(tmpx,tmpy)
-            m.plot(mx, my, color, alpha=alpha, lw=linewidth)
-            
+            if( abs(tmpx[1]-tmpx[0]) < 180.0):
+                tmpy=(data[i-1][1], data[i][1])            
+                mx,my=m(tmpx,tmpy)
+                m.plot(mx, my, color, alpha=alpha, lw=linewidth)
 
         if(t==0):
             print "Bad time at ",i
