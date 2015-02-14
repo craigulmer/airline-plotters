@@ -19,7 +19,7 @@ import bz2
 
 # Globals
 crop_region='world' #'usa_main' #sfbay, world, ukraine
-color='b'      #Line color. Can also do '-ob' for line w/ points
+#color='b'      #Line color. Can also do '-ob' for line w/ points
 alpha='0.09'   #How faint to make the line.
 resolution='l' #Set level-of-detail on maps: c,l,h
 linewidth=1.0  #How thick to make the line
@@ -53,18 +53,6 @@ def haversine(lon1, lat1, lon2, lat2):
     c=2*atan2(sqrt(a),sqrt(1-a))
     mi = 3956 * c
     return mi
-
-
-# pylab kludge to make labels readable
-def fmt_commas(val, pos=None):
-    s = '%d' % val
-    groups = []
-    while s and s[-1].isdigit():
-        groups.append(s[-3:])
-        s = s[:-3]
-    return s + ','.join(reversed(groups))
-
-
 
 
 
@@ -153,13 +141,34 @@ for line in file:
         #Look for segments that were longer than a certain
         #duration, and were actually in the air
         #if((t>2*sampleperiod) and (t<4*sampleperiod) 
-        if((t>=num_periods*sampleperiod) 
-             and (data[i-1][2]>altitude_thresh) and (data[i][2]>altitude_thresh)):
+
+        if 0:
+            # Try plotting good and bad using different colors
+            color='b'
+            if((t>=num_periods*sampleperiod) 
+               and (data[i-1][2]>altitude_thresh) and (data[i][2]>altitude_thresh)):
+                color='r'
+
             tmpx=(data[i-1][0], data[i][0])
             if( abs(tmpx[1]-tmpx[0]) < 180.0):
                 tmpy=(data[i-1][1], data[i][1])            
                 mx,my=m(tmpx,tmpy)
-                m.plot(mx, my, color, alpha=alpha, lw=linewidth)
+            m.plot(mx, my, color, alpha=alpha, lw=linewidth)
+
+        else:
+
+            if((t>=num_periods*sampleperiod) 
+               and (data[i-1][2]>altitude_thresh) and (data[i][2]>altitude_thresh)):
+                color='r'
+
+                tmpx=(data[i-1][0], data[i][0])
+                if( abs(tmpx[1]-tmpx[0]) < 180.0):
+                    tmpy=(data[i-1][1], data[i][1])            
+                    mx,my=m(tmpx,tmpy)
+                    m.plot(mx, my, color, alpha=alpha, lw=linewidth)
+
+
+           
 
         if(t==0):
             print "Bad time at ",i
