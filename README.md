@@ -71,3 +71,14 @@ Requirements: basemap, basemap-data, basemap-data-hires, geos
 On centos6, this can be done via:
  yum install python-basemap python-basemap-data python-basemap-data-hires geos
 
+
+Gap Plotter
+-----------
+This plotter takes a look at tracks and plots segments that are longer
+than a particular duration. It expects that you're sampling at a known
+interval (say 6mins), and that if the time difference between two points
+is greater than 2x or 3x the sampling period, the plane was not in
+a place where someone could hear it. By plotting all of these undersampled
+segments, you can get an idea of where the gaps in coverage are.
+
+
