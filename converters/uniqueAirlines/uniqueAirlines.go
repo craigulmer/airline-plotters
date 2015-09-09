@@ -31,6 +31,9 @@ func NewPlaneRecord(id string) *PlaneRecord {
 	}
 }
 func (pr *PlaneRecord) AddFlight(fid string){
+	if fid=="" {
+		return
+	}
 	pr.flight_list[fid] = true;
 	if len(fid) >= 2{
 		pr.carrier_list[ fid[0:2] ] = true
@@ -46,8 +49,14 @@ func (pr *PlaneRecord) Dump(){
 	}
 }
 func JoinStringMap(src_map map[string]bool) string {
+	if len(src_map) == 0 {
+		return "NONE"
+	}
 	a := make([]string,0,len(src_map))
 	for k:=range src_map {
+		if k=="" {
+			k="NONE"
+		}
 		a = append(a, k)
 	}
 	return strings.Join(a,"|")
